@@ -7,6 +7,6 @@ import (
 
 func main() {
 	common.SetupEnvironmentVars()
-
+	root.SetupDatabaseConnection()
 	root.SetupRoutes()
 }
