@@ -2,7 +2,7 @@ version: '3'
 
 name: zero
 
-services:
+services: 
   postgres:
     image: postgres:16-alpine
     restart: always

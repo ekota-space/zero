@@ -14,7 +14,8 @@ type environment struct {
 	PostgresDB       string `env:"POSTGRES_DB,default=postgres"`
 	PostgresUser     string `env:"POSTGRES_USER,default=postgres"`
 	PostgresPassword string `env:"POSTGRES_PASSWORD,default=postgres"`
-	Extras           env.EnvSet
+
+	Extras env.EnvSet
 }
 
 var Env environment
