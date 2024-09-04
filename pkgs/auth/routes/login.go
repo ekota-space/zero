@@ -35,7 +35,8 @@ func PostLogin(ctx *gin.Context) {
 	}
 
 	user.Password = nil // Remember to always remove the password field
-	tokens.User = &user
 
-	ctx.JSON(200, tokens)
+	auth.SetCookies(ctx, tokens)
+
+	ctx.JSON(200, user)
 }

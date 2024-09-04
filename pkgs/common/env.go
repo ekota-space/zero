@@ -2,9 +2,15 @@ package common
 
 import (
 	"log"
+	"time"
 
 	"github.com/Netflix/go-env"
 	"github.com/joho/godotenv"
+)
+
+const (
+	AccessTokenDuration  = time.Hour
+	RefreshTokenDuration = time.Hour * 24 * 30 * 6
 )
 
 type environment struct {

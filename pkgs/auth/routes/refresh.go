@@ -10,30 +10,28 @@ import (
 )
 
 func GetRefresh(ctx *gin.Context) {
-	accessToken := strings.Split(ctx.GetHeader("Authorization"), "Bearer ")[1]
+	accessToken, err := ctx.Cookie("acc_t")
 
-	if accessToken == "" {
+	if err != nil || strings.TrimSpace(accessToken) == "" {
 		ctx.JSON(400, gin.H{"error": "Access token is required"})
 		return
 	}
 
-	_, err := jwt.ParseWithClaims(accessToken, &auth.Claims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(common.Env.JwtAccessTokenSecret), nil
-	})
+	_, jwtToken, err := auth.VerifyAccessToken(accessToken)
 
 	if err != nil {
 		ctx.JSON(400, gin.H{"error": "Invalid access token"})
 		return
 	}
 
-	// if jwtToken.Valid {
-	// 	ctx.JSON(400, gin.H{"error": "Access token is still valid"})
-	// 	return
-	// }
+	if jwtToken.Valid {
+		ctx.JSON(400, gin.H{"error": "Access token is still valid"})
+		return
+	}
 
-	refreshToken := ctx.GetHeader("X-Refresh-Token")
+	refreshToken, err := ctx.Cookie("ref_t")
 
-	if refreshToken == "" {
+	if err != nil || refreshToken == "" {
 		ctx.JSON(400, gin.H{"error": "Refresh token is required"})
 		return
 	}
@@ -67,7 +65,7 @@ func GetRefresh(ctx *gin.Context) {
 		return
 	}
 
-	tokens.User = nil
+	auth.SetCookies(ctx, tokens)
 
-	ctx.JSON(200, tokens)
+	ctx.Status(200)
 }

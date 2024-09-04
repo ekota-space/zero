@@ -54,7 +54,7 @@ func PostRegister(ctx *gin.Context) {
 		ctx.JSON(500, gin.H{"error": err.Error()})
 	}
 
-	tokens.User = &newUser
+	auth.SetCookies(ctx, tokens)
 
-	ctx.JSON(201, tokens)
+	ctx.JSON(201, newUser)
 }

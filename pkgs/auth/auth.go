@@ -7,6 +7,7 @@ import (
 	auth "github.com/ekota-space/zero/pkgs/auth/models"
 	"github.com/ekota-space/zero/pkgs/common"
 	"github.com/ekota-space/zero/pkgs/root/db"
+	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -44,7 +45,7 @@ func GenerateAuthTokens(user *auth.Users) (authDao.AuthTokenResponseDao, error) 
 				Issuer:    "zero",
 				Subject:   user.Username,
 				Audience:  jwt.ClaimStrings{"zero"},
-				ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)), // 1 hour
+				ExpiresAt: jwt.NewNumericDate(time.Now().Add(common.AccessTokenDuration)), // 1 hour
 			},
 		},
 	)
@@ -57,7 +58,7 @@ func GenerateAuthTokens(user *auth.Users) (authDao.AuthTokenResponseDao, error) 
 				Issuer:    "zero",
 				Subject:   user.Username,
 				Audience:  jwt.ClaimStrings{"zero"},
-				ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24 * 30 * 6)), // 6 months
+				ExpiresAt: jwt.NewNumericDate(time.Now().Add(common.RefreshTokenDuration)), // 6 months
 			},
 		},
 	)
@@ -78,4 +79,23 @@ func GenerateAuthTokens(user *auth.Users) (authDao.AuthTokenResponseDao, error) 
 		AccessToken:  accessTokenString,
 		RefreshToken: refreshTokenString,
 	}, nil
+}
+
+func VerifyAccessToken(token string) (*Claims, *jwt.Token, error) {
+	claims := &Claims{}
+	accessToken, err := jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
+		return []byte(common.Env.JwtAccessTokenSecret), nil
+	})
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return claims, accessToken, nil
+
+}
+
+func SetCookies(ctx *gin.Context, tokens authDao.AuthTokenResponseDao) {
+	ctx.SetCookie("acc_t", tokens.AccessToken, int(common.AccessTokenDuration), "/", "localhost", false, true)
+	ctx.SetCookie("ref_t", tokens.RefreshToken, int(common.RefreshTokenDuration), "/", "localhost", false, true)
 }
