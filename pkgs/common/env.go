@@ -15,6 +15,9 @@ type environment struct {
 	PostgresUser     string `env:"POSTGRES_USER,default=postgres"`
 	PostgresPassword string `env:"POSTGRES_PASSWORD,default=postgres"`
 
+	JwtAccessTokenSecret  string `env:"JWT_ACCESS_TOKEN_SECRET"`
+	JwtRefreshTokenSecret string `env:"JWT_REFRESH_TOKEN_SECRET"`
+
 	Extras env.EnvSet
 }
 

@@ -7,16 +7,16 @@ import (
 )
 
 type Users struct {
-	ID        uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid();uniqueIndex"`
-	FirstName string    `gorm:"size:255"`
-	LastName  string    `gorm:"size:255"`
-	Username  string    `gorm:"size:255"`
-	Email     string    `gorm:"type:text;uniqueIndex"`
+	ID        uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid();uniqueIndex" json:"id"`
+	FirstName string    `gorm:"size:255" json:"first_name"`
+	LastName  string    `gorm:"size:255" json:"last_name"`
+	Username  string    `gorm:"size:255" json:"username"`
+	Email     string    `gorm:"type:text;uniqueIndex" json:"email"`
 
-	Password *string `gorm:"type:text"`
+	Password *string `gorm:"type:text" json:"password"`
 
-	CreatedAt       time.Time
-	UpdatedAt       time.Time
-	VerifiedAt      *time.Time
-	PasswordResetAt *time.Time
+	CreatedAt       time.Time  `json:"created_at"`
+	UpdatedAt       time.Time  `json:"updated_at"`
+	VerifiedAt      *time.Time `json:"verified_at"`
+	PasswordResetAt *time.Time `json:"password_reset_at"`
 }
