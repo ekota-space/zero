@@ -1,4 +1,4 @@
-package auth
+package authDao
 
 type RegisterDao struct {
 	FirstName string `json:"first_name"`

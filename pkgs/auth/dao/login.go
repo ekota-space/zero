@@ -1,4 +1,4 @@
-package auth
+package authDao
 
 type LoginDao struct {
 	Email    string `json:"email"`

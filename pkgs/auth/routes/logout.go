@@ -1,4 +1,4 @@
-package auth
+package authRoutes
 
 import (
 	"github.com/ekota-space/zero/pkgs/auth"

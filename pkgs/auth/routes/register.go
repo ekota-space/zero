@@ -1,9 +1,13 @@
-package auth
+package authRoutes
 
 import (
+	"fmt"
+	"strings"
+
 	auth "github.com/ekota-space/zero/pkgs/auth"
 	authDao "github.com/ekota-space/zero/pkgs/auth/dao"
 	authModels "github.com/ekota-space/zero/pkgs/auth/models"
+	"github.com/ekota-space/zero/pkgs/common"
 	"github.com/ekota-space/zero/pkgs/root/db"
 
 	"github.com/gin-gonic/gin"
@@ -36,7 +40,11 @@ func PostRegister(ctx *gin.Context) {
 	}
 
 	if err := db.DB.Create(&user).Error; err != nil {
-		ctx.JSON(500, gin.H{"error": err.Error()})
+		field := "Username"
+		if strings.Contains(err.Error(), "email") {
+			field = "Email"
+		}
+		ctx.JSON(400, gin.H{"error": fmt.Sprintf("%s already exists", field)})
 		return
 	}
 
@@ -48,13 +56,7 @@ func PostRegister(ctx *gin.Context) {
 		return
 	}
 
-	newUser, err := auth.GetUserByEmail(user.Email)
-
-	if err != nil {
-		ctx.JSON(500, gin.H{"error": err.Error()})
-	}
-
 	auth.SetCookies(ctx, tokens)
 
-	ctx.JSON(201, newUser)
+	ctx.JSON(201, gin.H{"expirationDurationSeconds": common.AccessTokenDuration})
 }

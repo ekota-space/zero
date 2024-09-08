@@ -1,8 +1,9 @@
-package auth
+package authRoutes
 
 import (
 	"github.com/ekota-space/zero/pkgs/auth"
 	authDao "github.com/ekota-space/zero/pkgs/auth/dao"
+	"github.com/ekota-space/zero/pkgs/common"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -34,9 +35,7 @@ func PostLogin(ctx *gin.Context) {
 		return
 	}
 
-	user.Password = nil // Remember to always remove the password field
-
 	auth.SetCookies(ctx, tokens)
 
-	ctx.JSON(200, user)
+	ctx.JSON(200, gin.H{"expirationDurationSeconds": common.AccessTokenDuration})
 }

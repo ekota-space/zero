@@ -1,4 +1,4 @@
-package auth
+package authRoutes
 
 import (
 	"strings"
@@ -25,7 +25,10 @@ func GetRefresh(ctx *gin.Context) {
 	}
 
 	if jwtToken.Valid {
-		ctx.JSON(400, gin.H{"error": "Access token is still valid"})
+		ctx.JSON(400, gin.H{
+			"error":            "Access token is still valid",
+			"expiresAtSeconds": jwtToken.Claims.(*auth.Claims).ExpiresAt.Unix(),
+		})
 		return
 	}
 
@@ -67,5 +70,5 @@ func GetRefresh(ctx *gin.Context) {
 
 	auth.SetCookies(ctx, tokens)
 
-	ctx.Status(200)
+	ctx.JSON(200, gin.H{"expirationDurationSeconds": int(common.AccessTokenDuration.Seconds())})
 }

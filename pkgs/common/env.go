@@ -24,6 +24,8 @@ type environment struct {
 	JwtAccessTokenSecret  string `env:"JWT_ACCESS_TOKEN_SECRET"`
 	JwtRefreshTokenSecret string `env:"JWT_REFRESH_TOKEN_SECRET"`
 
+	ClientOrigin string `env:"CLIENT_ORIGIN,default=localhost"`
+
 	Extras env.EnvSet
 }
 

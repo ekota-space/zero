@@ -96,11 +96,11 @@ func VerifyAccessToken(token string) (*Claims, *jwt.Token, error) {
 }
 
 func SetCookies(ctx *gin.Context, tokens authDao.AuthTokenResponseDao) {
-	ctx.SetCookie("acc_t", tokens.AccessToken, int(common.AccessTokenDuration), "/", "localhost", false, true)
-	ctx.SetCookie("ref_t", tokens.RefreshToken, int(common.RefreshTokenDuration), "/", "localhost", false, true)
+	ctx.SetCookie("acc_t", tokens.AccessToken, int(common.AccessTokenDuration), "/", common.Env.ClientOrigin, false, true)
+	ctx.SetCookie("ref_t", tokens.RefreshToken, int(common.RefreshTokenDuration), "/", common.Env.ClientOrigin, false, true)
 }
 
 func ClearCookies(ctx *gin.Context) {
-	ctx.SetCookie("acc_t", "", -1, "/", "localhost", false, true)
-	ctx.SetCookie("ref_t", "", -1, "/", "localhost", false, true)
+	ctx.SetCookie("acc_t", "", -1, "/", common.Env.ClientOrigin, false, true)
+	ctx.SetCookie("ref_t", "", -1, "/", common.Env.ClientOrigin, false, true)
 }

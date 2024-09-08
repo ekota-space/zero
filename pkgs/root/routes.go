@@ -2,11 +2,13 @@ package root
 
 import (
 	"fmt"
+	"time"
 
 	auth "github.com/ekota-space/zero/pkgs/auth"
 	authRoutes "github.com/ekota-space/zero/pkgs/auth/routes"
 	"github.com/ekota-space/zero/pkgs/common"
 	root "github.com/ekota-space/zero/pkgs/root/routes"
+	userRoutes "github.com/ekota-space/zero/pkgs/user/routes"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
@@ -14,8 +16,14 @@ import (
 func SetupRoutes() {
 	r := gin.Default()
 
-	corsConfig := cors.DefaultConfig()
-	corsConfig.AllowOrigins = []string{"*"} // TODO: Change this to a specific domain
+	corsConfig := cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
+		AllowOriginFunc:  func(origin string) bool { return true },
+		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization", "Access-Control-Allow-Headers"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}
 	r.Use(cors.New(corsConfig))
 
 	r.GET("/", root.GetRoot)
@@ -28,6 +36,8 @@ func SetupRoutes() {
 	protected := r.Group("/")
 
 	protected.Use(auth.AuthMiddleware())
+
+	protected.GET("/user/me", userRoutes.GetUserInfo)
 
 	r.Run(fmt.Sprintf("localhost:%d", common.Env.Port))
 }

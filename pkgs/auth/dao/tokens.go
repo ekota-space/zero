@@ -1,4 +1,4 @@
-package auth
+package authDao
 
 type AuthTokenResponseDao struct {
 	AccessToken  string
