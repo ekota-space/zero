@@ -58,5 +58,5 @@ func PostRegister(ctx *gin.Context) {
 
 	auth.SetCookies(ctx, tokens)
 
-	ctx.JSON(201, gin.H{"expirationDurationSeconds": common.AccessTokenDuration})
+	ctx.JSON(201, gin.H{"expirationDurationSeconds": int(common.AccessTokenDuration.Seconds())})
 }

@@ -45,7 +45,7 @@ func GenerateAuthTokens(user *auth.Users) (authDao.AuthTokenResponseDao, error) 
 				Issuer:    "zero",
 				Subject:   user.Username,
 				Audience:  jwt.ClaimStrings{"zero"},
-				ExpiresAt: jwt.NewNumericDate(time.Now().Add(common.AccessTokenDuration)), // 1 hour
+				ExpiresAt: jwt.NewNumericDate(time.Now().UTC().Add(common.AccessTokenDuration)), // 1 hour
 			},
 		},
 	)
@@ -58,7 +58,7 @@ func GenerateAuthTokens(user *auth.Users) (authDao.AuthTokenResponseDao, error) 
 				Issuer:    "zero",
 				Subject:   user.Username,
 				Audience:  jwt.ClaimStrings{"zero"},
-				ExpiresAt: jwt.NewNumericDate(time.Now().Add(common.RefreshTokenDuration)), // 6 months
+				ExpiresAt: jwt.NewNumericDate(time.Now().UTC().Add(common.RefreshTokenDuration)), // 6 months
 			},
 		},
 	)
@@ -96,8 +96,8 @@ func VerifyAccessToken(token string) (*Claims, *jwt.Token, error) {
 }
 
 func SetCookies(ctx *gin.Context, tokens authDao.AuthTokenResponseDao) {
-	ctx.SetCookie("acc_t", tokens.AccessToken, int(common.AccessTokenDuration), "/", common.Env.ClientOrigin, false, true)
-	ctx.SetCookie("ref_t", tokens.RefreshToken, int(common.RefreshTokenDuration), "/", common.Env.ClientOrigin, false, true)
+	ctx.SetCookie("acc_t", tokens.AccessToken, int(common.AccessTokenDuration.Seconds()), "/", common.Env.ClientOrigin, false, true)
+	ctx.SetCookie("ref_t", tokens.RefreshToken, int(common.RefreshTokenDuration.Seconds()), "/", common.Env.ClientOrigin, false, true)
 }
 
 func ClearCookies(ctx *gin.Context) {

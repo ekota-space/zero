@@ -1,6 +1,8 @@
 package auth
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+)
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -12,6 +14,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		claims, _, err := VerifyAccessToken(accessToken)
+
 		if err != nil {
 			c.JSON(401, gin.H{"error": "Invalid access token"})
 			c.Abort()
