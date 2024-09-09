@@ -3,7 +3,6 @@ package db
 import (
 	"fmt"
 
-	auth "github.com/ekota-space/zero/pkgs/auth/models"
 	"github.com/ekota-space/zero/pkgs/common"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -28,14 +27,4 @@ func SetupDatabaseConnection() {
 	}
 
 	DB = db
-
-	RunMigrations()
-}
-
-func RunMigrations() {
-	err := DB.AutoMigrate(&auth.Users{})
-
-	if err != nil {
-		panic(fmt.Sprintf("Failed to run migrations: %v", err))
-	}
 }
