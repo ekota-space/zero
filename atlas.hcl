@@ -3,15 +3,17 @@ data "external_schema" "gorm" {
     "go",
     "run",
     "-mod=mod",
-    "./loader",
+    "./db/loader",
   ]
 }
 
 env "gorm" {
+  schemas = [ "public" ]
   src = data.external_schema.gorm.url
-  dev = "postgres://postgres:postgres@localhost:5432/zero?sslmode=disable"
+  // This is just to create diff
+  dev = "docker://postgres/16-alpine/zero?search_path=public"
   migration {
-    dir = "file://migrations"
+    dir = "file://db/migrations"
   }
   format {
     migrate {

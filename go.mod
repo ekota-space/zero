@@ -3,6 +3,7 @@ module github.com/ekota-space/zero
 go 1.22.6
 
 require (
+	ariga.io/atlas-go-sdk v0.2.3
 	ariga.io/atlas-provider-gorm v0.5.0
 	github.com/Netflix/go-env v0.0.1
 	github.com/gin-contrib/cors v1.7.2
@@ -16,7 +17,6 @@ require (
 )
 
 require (
-	ariga.io/atlas-go-sdk v0.2.3 // indirect
 	github.com/bytedance/sonic v1.12.2 // indirect
 	github.com/bytedance/sonic/loader v0.2.0 // indirect
 	github.com/cloudwego/base64x v0.1.4 // indirect
