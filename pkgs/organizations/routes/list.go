@@ -3,11 +3,10 @@ package organizationRoutes
 import (
 	"strconv"
 
+	organizationDao "github.com/ekota-space/zero/pkgs/organizations/dao"
 	"github.com/ekota-space/zero/pkgs/root/db"
-	"github.com/ekota-space/zero/pkgs/root/db/zero/public/model"
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/table"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 func GetList(ctx *gin.Context) {
@@ -49,16 +48,7 @@ func GetList(ctx *gin.Context) {
 		LIMIT(int64(limitInt)).
 		OFFSET(int64(offsetInt))
 
-	var organizations []struct {
-		model.Organizations
-		Owner struct {
-			ID        uuid.UUID
-			FirstName string
-			LastName  string
-			Email     string
-			Username  string
-		}
-	}
+	organizations := []organizationDao.OrganizationsWithOwner{}
 
 	err = stmt.Query(db.DB, &organizations)
 

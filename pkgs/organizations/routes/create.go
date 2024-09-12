@@ -31,7 +31,13 @@ func PostCreate(ctx *gin.Context) {
 		return
 	}
 
-	stmt := table.Organizations.INSERT(table.Organizations.Name, table.Organizations.OwnerID, table.Organizations.Description).MODEL(payload).RETURNING(table.Organizations.AllColumns)
+	stmt := table.Organizations.INSERT(
+		table.Organizations.Name,
+		table.Organizations.OwnerID,
+		table.Organizations.Description,
+	).
+		MODEL(payload).
+		RETURNING(table.Organizations.AllColumns)
 
 	result := model.Organizations{}
 	err = stmt.Query(tx, &result)
@@ -42,6 +48,8 @@ func PostCreate(ctx *gin.Context) {
 		ctx.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
+
+	tx.Commit()
 
 	ctx.JSON(200, gin.H{"data": result})
 }
