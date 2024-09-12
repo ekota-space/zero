@@ -15,6 +15,6 @@ type Organizations struct {
 	Name        string  `gorm:"size:255;not null" json:"name"`
 	Description *string `gorm:"size:255;" json:"description"`
 
-	OwnerID uuid.UUID        `json:"owner_id"`
-	Owner   authModels.Users `json:"owner"`
+	OwnerID uuid.UUID         `json:"owner_id"`
+	Owner   *authModels.Users `json:"owner,omitempty"`
 }

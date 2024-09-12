@@ -7,6 +7,7 @@ import (
 	auth "github.com/ekota-space/zero/pkgs/auth"
 	authRoutes "github.com/ekota-space/zero/pkgs/auth/routes"
 	"github.com/ekota-space/zero/pkgs/common"
+	organizationRoutes "github.com/ekota-space/zero/pkgs/organizations/routes"
 	root "github.com/ekota-space/zero/pkgs/root/routes"
 	userRoutes "github.com/ekota-space/zero/pkgs/user/routes"
 	"github.com/gin-contrib/cors"
@@ -38,6 +39,11 @@ func SetupRoutes() {
 	protected.Use(auth.AuthMiddleware())
 
 	protected.GET("/user/me", userRoutes.GetUserInfo)
+
+	protected.GET("/organizations", organizationRoutes.GetList)
+	protected.POST("/organizations", organizationRoutes.PostCreate)
+
+	protected.GET("/organizations/:id", organizationRoutes.GetOrganization)
 
 	r.Run(fmt.Sprintf("localhost:%d", common.Env.Port))
 }
