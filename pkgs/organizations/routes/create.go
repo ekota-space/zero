@@ -17,6 +17,13 @@ func PostCreate(ctx *gin.Context) {
 		return
 	}
 
+	userId := ctx.GetString("id")
+
+	if userId != body.OwnerID {
+		ctx.JSON(403, gin.H{"error": "owner_id must be the same as the authenticated user"})
+		return
+	}
+
 	ownerId := uuid.MustParse(body.OwnerID)
 	payload := model.Organizations{
 		Name:        body.Name,
@@ -51,5 +58,5 @@ func PostCreate(ctx *gin.Context) {
 
 	tx.Commit()
 
-	ctx.JSON(200, gin.H{"data": result})
+	ctx.JSON(201, gin.H{"data": result})
 }
