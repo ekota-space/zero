@@ -7,6 +7,8 @@ import (
 	"github.com/ekota-space/zero/pkgs/root/db"
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/table"
 	"github.com/gin-gonic/gin"
+	jet "github.com/go-jet/jet/v2/postgres"
+	"github.com/google/uuid"
 )
 
 func GetList(ctx *gin.Context) {
@@ -32,6 +34,8 @@ func GetList(ctx *gin.Context) {
 		return
 	}
 
+	userId := ctx.GetString("id")
+
 	stmt := table.Organizations.
 		INNER_JOIN(
 			table.Users,
@@ -45,6 +49,7 @@ func GetList(ctx *gin.Context) {
 			table.Users.Email,
 			table.Users.Username,
 		).
+		WHERE(table.Organizations.OwnerID.EQ(jet.UUID(uuid.MustParse(userId)))).
 		LIMIT(int64(limitInt)).
 		OFFSET(int64(offsetInt))
 

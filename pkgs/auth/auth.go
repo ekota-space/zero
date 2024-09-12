@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	jet "github.com/go-jet/jet/v2/postgres"
 	jwt "github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 )
 
 func GetUserByEmailUnsafely(email string) (*model.Users, error) {
@@ -22,6 +23,17 @@ func GetUserByEmailUnsafely(email string) (*model.Users, error) {
 		return nil, err
 	}
 	return &user, nil
+}
+
+func CheckUserExistsByEmail(email string) (bool, string, error) {
+	stmt := table.Users.SELECT(table.Users.ID).WHERE(table.Users.Email.EQ(jet.String(email)))
+
+	user := model.Users{}
+	if err := stmt.Query(db.DB, &user); err != nil {
+		return false, "", err
+	}
+
+	return user.ID != uuid.Nil, user.ID.String(), nil
 }
 
 func GetUserByEmail(email string) (*model.Users, error) {

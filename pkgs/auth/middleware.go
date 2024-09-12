@@ -21,6 +21,19 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
+		yes, userId, err := CheckUserExistsByEmail(claims.Email)
+
+		if err != nil || !yes {
+			if !yes {
+				c.JSON(401, gin.H{"error": "User not found"})
+			} else {
+				c.JSON(401, gin.H{"error": "Invalid access token"})
+			}
+			c.Abort()
+			return
+		}
+
+		c.Set("id", userId)
 		c.Set("username", claims.Username)
 		c.Set("email", claims.Email)
 		c.Next()
