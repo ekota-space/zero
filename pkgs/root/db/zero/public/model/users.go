@@ -13,14 +13,14 @@ import (
 )
 
 type Users struct {
-	ID              uuid.UUID `sql:"primary_key"`
-	FirstName       string
-	LastName        string
-	Username        string
-	Email           string
-	Password        *string
-	CreatedAt       time.Time
-	UpdatedAt       time.Time
-	VerifiedAt      *time.Time
-	PasswordResetAt *time.Time
+	ID              uuid.UUID  `sql:"primary_key" json:"id"`
+	FirstName       string     `json:"first_name"`
+	LastName        string     `json:"last_name"`
+	Username        string     `json:"username"`
+	Email           string     `json:"email"`
+	Password        *string    `json:"password,omitempty"`
+	CreatedAt       time.Time  `json:"created_at"`
+	UpdatedAt       time.Time  `json:"updated_at"`
+	VerifiedAt      *time.Time `json:"verified_at,omitempty"`
+	PasswordResetAt *time.Time `json:"password_reset_at,omitempty"`
 }

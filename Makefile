@@ -2,7 +2,7 @@ DB_URL=postgres://postgres:postgres@localhost:5432/zero?sslmode=disable
 MIGRATION_DIR=file://db/migrations
 
 gen:
-		jet -dsn=$(DB_URL) -schema=public -path=./pkgs/root/db
+		go run db/generator.go
 
 diff:
 		atlas migrate diff --env local

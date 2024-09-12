@@ -13,10 +13,10 @@ import (
 )
 
 type Organizations struct {
-	ID          uuid.UUID `sql:"primary_key"`
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-	Name        string
-	Description *string
-	OwnerID     uuid.UUID
+	ID          uuid.UUID `sql:"primary_key" json:"id"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+	Name        string    `json:"name"`
+	Description *string   `json:"description,omitempty"`
+	OwnerID     uuid.UUID `json:"owner_id"`
 }
