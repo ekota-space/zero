@@ -4,30 +4,37 @@ import (
 	"time"
 
 	authDao "github.com/ekota-space/zero/pkgs/auth/dao"
-	auth "github.com/ekota-space/zero/pkgs/auth/models"
 	"github.com/ekota-space/zero/pkgs/common"
 	"github.com/ekota-space/zero/pkgs/root/db"
+	"github.com/ekota-space/zero/pkgs/root/db/zero/public/model"
+	"github.com/ekota-space/zero/pkgs/root/db/zero/public/table"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
+	jet "github.com/go-jet/jet/v2/postgres"
+	jwt "github.com/golang-jwt/jwt/v5"
 )
 
-func GetUserByEmailUnsafely(email string) (auth.Users, error) {
-	user := auth.Users{}
-	if err := db.DB.Where("email = ?", email).First(&user); err.Error != nil {
-		return auth.Users{}, err.Error
+func GetUserByEmailUnsafely(email string) (*model.Users, error) {
+	user := model.Users{}
+
+	stmt := table.Users.SELECT(table.Users.AllColumns).WHERE(table.Users.Email.EQ(jet.String(email)))
+
+	if err := stmt.Query(db.DB, &user); err != nil {
+		return nil, err
 	}
-	return user, nil
+	return &user, nil
 }
 
-func GetUserByEmail(email string) (auth.Users, error) {
-	user, err := GetUserByEmailUnsafely(email)
+func GetUserByEmail(email string) (*model.Users, error) {
+	user := model.Users{}
 
-	if err != nil {
-		return auth.Users{}, err
+	stmt := table.Users.
+		SELECT(table.Users.AllColumns.Except(table.Users.Password)).
+		WHERE(table.Users.Email.EQ(jet.String(email)))
+
+	if err := stmt.Query(db.DB, &user); err != nil {
+		return nil, err
 	}
-
-	user.Password = nil
-	return user, nil
+	return &user, nil
 }
 
 type Claims struct {
@@ -36,7 +43,7 @@ type Claims struct {
 	jwt.RegisteredClaims
 }
 
-func GenerateAuthTokens(user *auth.Users) (authDao.AuthTokenResponseDao, error) {
+func GenerateAuthTokens(user *model.Users) (authDao.AuthTokenResponseDao, error) {
 	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256,
 		Claims{
 			Username: user.Username,

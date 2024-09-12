@@ -28,7 +28,7 @@ func PostLogin(ctx *gin.Context) {
 		return
 	}
 
-	tokens, err := auth.GenerateAuthTokens(&user)
+	tokens, err := auth.GenerateAuthTokens(user)
 
 	if err != nil {
 		ctx.JSON(500, gin.H{"error": err.Error()})
