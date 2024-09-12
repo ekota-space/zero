@@ -23,6 +23,7 @@ type organizationsTable struct {
 	Name        postgres.ColumnString
 	Description postgres.ColumnString
 	OwnerID     postgres.ColumnString
+	Slug        postgres.ColumnString
 
 	AllColumns     postgres.ColumnList
 	MutableColumns postgres.ColumnList
@@ -69,8 +70,9 @@ func newOrganizationsTableImpl(schemaName, tableName, alias string) organization
 		NameColumn        = postgres.StringColumn("name")
 		DescriptionColumn = postgres.StringColumn("description")
 		OwnerIDColumn     = postgres.StringColumn("owner_id")
-		allColumns        = postgres.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, NameColumn, DescriptionColumn, OwnerIDColumn}
-		mutableColumns    = postgres.ColumnList{CreatedAtColumn, UpdatedAtColumn, NameColumn, DescriptionColumn, OwnerIDColumn}
+		SlugColumn        = postgres.StringColumn("slug")
+		allColumns        = postgres.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, NameColumn, DescriptionColumn, OwnerIDColumn, SlugColumn}
+		mutableColumns    = postgres.ColumnList{CreatedAtColumn, UpdatedAtColumn, NameColumn, DescriptionColumn, OwnerIDColumn, SlugColumn}
 	)
 
 	return organizationsTable{
@@ -83,6 +85,7 @@ func newOrganizationsTableImpl(schemaName, tableName, alias string) organization
 		Name:        NameColumn,
 		Description: DescriptionColumn,
 		OwnerID:     OwnerIDColumn,
+		Slug:        SlugColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

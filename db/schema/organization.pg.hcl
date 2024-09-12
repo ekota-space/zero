@@ -21,12 +21,17 @@ table "organizations" {
   }
   column "description" {
     null = true
-    type = character_varying(255)
+    type = text
+  }
+  column "slug" {
+    null = false
+    type = character_varying(16)
   }
   column "owner_id" {
     null = false
     type = uuid
   }
+  
   primary_key {
     columns = [column.id]
   }
@@ -39,5 +44,10 @@ table "organizations" {
   index "idx_organizations_id" {
     unique  = true
     columns = [column.id]
+  }
+
+  index "idx_organizations_slug" {
+    unique  = true
+    columns = [column.slug]
   }
 }

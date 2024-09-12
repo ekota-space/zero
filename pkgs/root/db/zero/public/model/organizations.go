@@ -19,4 +19,5 @@ type Organizations struct {
 	Name        string    `json:"name"`
 	Description *string   `json:"description,omitempty"`
 	OwnerID     uuid.UUID `json:"owner_id"`
+	Slug        string    `json:"slug"`
 }

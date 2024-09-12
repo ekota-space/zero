@@ -1,6 +1,7 @@
 package organizationRoutes
 
 import (
+	"github.com/ekota-space/zero/pkgs/common"
 	organizationDao "github.com/ekota-space/zero/pkgs/organizations/dao"
 	"github.com/ekota-space/zero/pkgs/root/db"
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/model"
@@ -29,6 +30,7 @@ func PostCreate(ctx *gin.Context) {
 		Name:        body.Name,
 		OwnerID:     ownerId,
 		Description: &body.Description,
+		Slug:        body.Slug,
 	}
 
 	tx, err := db.DB.Begin()
@@ -42,6 +44,7 @@ func PostCreate(ctx *gin.Context) {
 		table.Organizations.Name,
 		table.Organizations.OwnerID,
 		table.Organizations.Description,
+		table.Organizations.Slug,
 	).
 		MODEL(payload).
 		RETURNING(table.Organizations.AllColumns)
@@ -51,6 +54,11 @@ func PostCreate(ctx *gin.Context) {
 
 	if err != nil {
 		tx.Rollback()
+
+		if common.IsDuplicateKeyError(err) {
+			ctx.JSON(400, gin.H{"error": "Slug already exists"})
+			return
+		}
 
 		ctx.JSON(400, gin.H{"error": err.Error()})
 		return
