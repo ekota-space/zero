@@ -1,14 +1,14 @@
 package db
 
 import (
+	"database/sql"
 	"fmt"
 
 	"github.com/ekota-space/zero/pkgs/common"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
-var DB *gorm.DB
+var DB *sql.DB
 
 func SetupDatabaseConnection() {
 	dsn := fmt.Sprintf(
@@ -20,10 +20,10 @@ func SetupDatabaseConnection() {
 		common.Env.PostgresPort,
 	)
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err := sql.Open("pgx", dsn)
 
 	if err != nil {
-		panic(fmt.Sprintf("Failed to connect to database: %v", err))
+		panic(err)
 	}
 
 	DB = db

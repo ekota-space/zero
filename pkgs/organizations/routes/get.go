@@ -1,19 +1,29 @@
 package organizationRoutes
 
 import (
-	organizationModels "github.com/ekota-space/zero/pkgs/organizations/models"
 	"github.com/ekota-space/zero/pkgs/root/db"
+	"github.com/ekota-space/zero/pkgs/root/db/zero/public/model"
+	"github.com/ekota-space/zero/pkgs/root/db/zero/public/table"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+
+	jet "github.com/go-jet/jet/v2/postgres"
 )
 
 func GetOrganization(ctx *gin.Context) {
 	orgId := ctx.Param("id")
 
-	organization := organizationModels.Organizations{}
+	organization := model.Organizations{}
 
-	result := db.DB.Model(&organization).Where("id = ?", orgId).First(&organization)
+	stmt := table.Organizations.SELECT(table.Organizations.AllColumns).WHERE(
+		table.Organizations.ID.EQ(
+			jet.UUID(uuid.MustParse(orgId)),
+		),
+	)
 
-	if result.Error != nil {
+	err := stmt.Query(db.DB, &organization)
+
+	if err != nil || organization.ID == uuid.Nil {
 		ctx.JSON(404, gin.H{"error": "Organization not found"})
 		return
 	}
