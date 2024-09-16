@@ -11,6 +11,7 @@ package table
 // this method only once at the beginning of the program.
 func UseSchema(schema string) {
 	OrganizationAdmins = OrganizationAdmins.FromSchema(schema)
+	OrganizationMembers = OrganizationMembers.FromSchema(schema)
 	Organizations = Organizations.FromSchema(schema)
 	ProjectManagers = ProjectManagers.FromSchema(schema)
 	ProjectTeams = ProjectTeams.FromSchema(schema)

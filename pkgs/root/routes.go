@@ -7,8 +7,10 @@ import (
 	auth "github.com/ekota-space/zero/pkgs/auth"
 	authRoutes "github.com/ekota-space/zero/pkgs/auth/routes"
 	"github.com/ekota-space/zero/pkgs/common"
+	"github.com/ekota-space/zero/pkgs/organizations"
 	organizationRoutes "github.com/ekota-space/zero/pkgs/organizations/routes"
 	root "github.com/ekota-space/zero/pkgs/root/routes"
+	teamsRoutes "github.com/ekota-space/zero/pkgs/teams/routes"
 	userRoutes "github.com/ekota-space/zero/pkgs/user/routes"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -40,10 +42,17 @@ func SetupRoutes() {
 
 	protected.GET("/user/me", userRoutes.GetUserInfo)
 
-	protected.GET("/organizations", organizationRoutes.GetList)
-	protected.POST("/organizations", organizationRoutes.PostCreate)
+	orgs := protected.Group("/organizations")
+	{
+		orgs.GET("/", organizations.AccessCheckMiddleware(organizations.MEMBER), organizationRoutes.GetList)
+		orgs.POST("/", organizationRoutes.PostCreate)
+	}
 
-	protected.GET("/organizations/:id", organizationRoutes.GetOrganization)
+	teams := orgs.Group("/:orgSlug/teams")
+	{
+		teams.POST("/", organizations.AccessCheckMiddleware(organizations.ADMIN), teamsRoutes.PostCreate)
+		teams.GET("/", organizations.AccessCheckMiddleware(organizations.MEMBER), teamsRoutes.GetList)
+	}
 
 	r.Run(fmt.Sprintf("localhost:%d", common.Env.Port))
 }

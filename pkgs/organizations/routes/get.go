@@ -11,13 +11,13 @@ import (
 )
 
 func GetOrganization(ctx *gin.Context) {
-	orgId := ctx.Param("id")
+	slug := ctx.Param("orgId")
 
 	organization := model.Organizations{}
 
 	stmt := table.Organizations.SELECT(table.Organizations.AllColumns).WHERE(
-		table.Organizations.ID.EQ(
-			jet.UUID(uuid.MustParse(orgId)),
+		table.Organizations.Slug.EQ(
+			jet.String(slug),
 		),
 	)
 
