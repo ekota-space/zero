@@ -1,9 +1,9 @@
 package organizations
 
 import (
-	"github.com/ekota-space/zero/pkgs/root/db"
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/model"
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/table"
+	"github.com/ekota-space/zero/pkgs/root/ql"
 	jet "github.com/go-jet/jet/v2/postgres"
 	"github.com/google/uuid"
 )
@@ -26,7 +26,7 @@ func GetOrganizationBySlug(slug string) (model.Organizations, error) {
 
 	var org model.Organizations
 
-	err := stmt.Query(db.DB, &org)
+	err := stmt.Query(ql.GetDB(), &org)
 
 	return org, err
 }
@@ -45,7 +45,7 @@ func GetOrganizationMemberByIds(userId string, orgId string) (model.Organization
 
 	var member model.OrganizationMembers
 
-	err := stmt.Query(db.DB, &member)
+	err := stmt.Query(ql.GetDB(), &member)
 
 	return member, err
 }
@@ -64,7 +64,7 @@ func GetOrganizationAdminByIds(userId string, orgId string) (model.OrganizationA
 
 	var admin model.OrganizationAdmins
 
-	err := stmt.Query(db.DB, &admin)
+	err := stmt.Query(ql.GetDB(), &admin)
 
 	return admin, err
 

@@ -1,9 +1,9 @@
 package teamsRoutes
 
 import (
-	"github.com/ekota-space/zero/pkgs/root/db"
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/model"
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/table"
+	"github.com/ekota-space/zero/pkgs/root/ql"
 	"github.com/gin-gonic/gin"
 	jet "github.com/go-jet/jet/v2/postgres"
 	"github.com/google/uuid"
@@ -24,7 +24,7 @@ func GetList(ctx *gin.Context) {
 			),
 		)
 
-	err := stmt.Query(db.DB, &teams)
+	err := stmt.Query(ql.GetDB(), &teams)
 
 	if err != nil {
 		ctx.JSON(500, gin.H{"error": "Failed to fetch teams"})

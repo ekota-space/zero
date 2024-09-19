@@ -2,9 +2,9 @@ package teamsRoutes
 
 import (
 	"github.com/ekota-space/zero/pkgs/common"
-	"github.com/ekota-space/zero/pkgs/root/db"
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/model"
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/table"
+	"github.com/ekota-space/zero/pkgs/root/ql"
 	teamsDao "github.com/ekota-space/zero/pkgs/teams/dao"
 	"github.com/gin-gonic/gin"
 )
@@ -17,7 +17,7 @@ func PostCreate(ctx *gin.Context) {
 		return
 	}
 
-	tx, err := db.DB.Begin()
+	tx, err := ql.GetDB().Begin()
 
 	if err != nil {
 		ctx.JSON(500, gin.H{"error": "Failed to start transaction"})

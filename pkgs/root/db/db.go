@@ -8,9 +8,7 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
-var DB *sql.DB
-
-func SetupDatabaseConnection() {
+func SetupDatabaseConnection() *sql.DB {
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
 		common.Env.PostgresHost,
@@ -26,5 +24,5 @@ func SetupDatabaseConnection() {
 		panic(err)
 	}
 
-	DB = db
+	return db
 }

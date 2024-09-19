@@ -3,9 +3,9 @@ package organizationRoutes
 import (
 	"github.com/ekota-space/zero/pkgs/common"
 	organizationDao "github.com/ekota-space/zero/pkgs/organizations/dao"
-	"github.com/ekota-space/zero/pkgs/root/db"
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/model"
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/table"
+	"github.com/ekota-space/zero/pkgs/root/ql"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
@@ -33,7 +33,7 @@ func PostCreate(ctx *gin.Context) {
 		Slug:        body.Slug,
 	}
 
-	tx, err := db.DB.Begin()
+	tx, err := ql.GetDB().Begin()
 
 	if err != nil {
 		ctx.JSON(500, gin.H{"error": "Failed to start transaction"})

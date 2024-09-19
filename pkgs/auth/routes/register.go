@@ -7,9 +7,9 @@ import (
 	auth "github.com/ekota-space/zero/pkgs/auth"
 	authDao "github.com/ekota-space/zero/pkgs/auth/dao"
 	"github.com/ekota-space/zero/pkgs/common"
-	"github.com/ekota-space/zero/pkgs/root/db"
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/model"
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/table"
+	"github.com/ekota-space/zero/pkgs/root/ql"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -40,7 +40,7 @@ func PostRegister(ctx *gin.Context) {
 		Password:  &passwordStr,
 	}
 
-	tx, err := db.DB.Begin()
+	tx, err := ql.GetDB().Begin()
 
 	if err != nil {
 		fmt.Println(err)

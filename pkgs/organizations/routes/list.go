@@ -1,9 +1,9 @@
 package organizationRoutes
 
 import (
-	"github.com/ekota-space/zero/pkgs/root/db"
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/model"
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/table"
+	"github.com/ekota-space/zero/pkgs/root/ql"
 	"github.com/gin-gonic/gin"
 	jet "github.com/go-jet/jet/v2/postgres"
 	"github.com/google/uuid"
@@ -18,7 +18,7 @@ func GetList(ctx *gin.Context) {
 
 	organizations := []model.Organizations{}
 
-	err := stmt.Query(db.DB, &organizations)
+	err := stmt.Query(ql.GetDB(), &organizations)
 
 	if err != nil {
 		ctx.JSON(400, gin.H{"error": err.Error()})
