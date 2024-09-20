@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/ekota-space/zero/pkgs/common"
 	"github.com/ekota-space/zero/pkgs/root"
 	"github.com/ekota-space/zero/pkgs/root/db"
@@ -13,5 +15,7 @@ func main() {
 
 	ql.InitLayer(db)
 
-	root.SetupRoutes()
+	router := root.SetupRoutes()
+
+	router.Run(fmt.Sprintf("localhost:%d", common.Env.Port))
 }

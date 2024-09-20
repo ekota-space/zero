@@ -1,12 +1,10 @@
 package root
 
 import (
-	"fmt"
 	"time"
 
 	auth "github.com/ekota-space/zero/pkgs/auth"
 	authRoutes "github.com/ekota-space/zero/pkgs/auth/routes"
-	"github.com/ekota-space/zero/pkgs/common"
 	"github.com/ekota-space/zero/pkgs/organizations"
 	organizationRoutes "github.com/ekota-space/zero/pkgs/organizations/routes"
 	root "github.com/ekota-space/zero/pkgs/root/routes"
@@ -16,7 +14,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRoutes() {
+func SetupRoutes() *gin.Engine {
 	r := gin.Default()
 
 	corsConfig := cors.Config{
@@ -54,5 +52,5 @@ func SetupRoutes() {
 		teams.GET("/", organizations.AccessCheckMiddleware(organizations.MEMBER), teamsRoutes.GetList)
 	}
 
-	r.Run(fmt.Sprintf("localhost:%d", common.Env.Port))
+	return r
 }

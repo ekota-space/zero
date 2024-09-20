@@ -43,3 +43,18 @@ func SetupEnvironmentVars() {
 	}
 	Env.Extras = es
 }
+
+func SetupTestEnvironmentVars() {
+	Env = environment{
+		Port:                  8080,
+		PostgresHost:          "localhost",
+		PostgresPort:          "5433",
+		PostgresDB:            "test",
+		PostgresUser:          "postgres",
+		PostgresPassword:      "postgres",
+		JwtAccessTokenSecret:  "secret",
+		JwtRefreshTokenSecret: "secret",
+		ClientOrigin:          "localhost",
+		Extras:                nil,
+	}
+}
