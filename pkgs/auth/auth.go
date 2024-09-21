@@ -12,7 +12,13 @@ import (
 	jet "github.com/go-jet/jet/v2/postgres"
 	jwt "github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 )
+
+func HashPassword(password string) (string, error) {
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	return string(hash), err
+}
 
 func GetUserByEmailUnsafely(email string) (*model.Users, error) {
 	user := model.Users{}

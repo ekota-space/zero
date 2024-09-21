@@ -12,7 +12,6 @@ import (
 	"github.com/ekota-space/zero/pkgs/root/ql"
 
 	"github.com/gin-gonic/gin"
-	"golang.org/x/crypto/bcrypt"
 )
 
 func PostRegister(ctx *gin.Context) {
@@ -23,14 +22,12 @@ func PostRegister(ctx *gin.Context) {
 		return
 	}
 
-	password, err := bcrypt.GenerateFromPassword([]byte(body.Password), bcrypt.DefaultCost)
+	passwordStr, err := auth.HashPassword(body.Password)
 
 	if err != nil {
 		ctx.JSON(500, gin.H{"error": err.Error()})
 		return
 	}
-
-	passwordStr := string(password)
 
 	user := model.Users{
 		FirstName: body.FirstName,

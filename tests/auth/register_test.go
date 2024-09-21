@@ -23,9 +23,6 @@ func postAuthRegister(router *gin.Engine, body authDao.RegisterDao) *httptest.Re
 }
 
 func TestPostRegister(t *testing.T) {
-	router, db := test.Initialize()
-
-	defer db.Close()
 
 	t.Run("TestPostRegister_Success", func(t *testing.T) {
 		body := fake.GenerateRandomRegisterDao()
