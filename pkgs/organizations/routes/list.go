@@ -13,8 +13,16 @@ func GetList(ctx *gin.Context) {
 	userId := ctx.GetString("id")
 
 	stmt := table.Organizations.
+		LEFT_JOIN(
+			table.OrganizationMembers,
+			table.OrganizationMembers.OrganizationID.EQ(table.Organizations.ID).
+				AND(table.OrganizationMembers.ID.EQ(jet.UUID(uuid.MustParse(userId)))),
+		).
 		SELECT(table.Organizations.AllColumns).
-		WHERE(table.Organizations.OwnerID.EQ(jet.UUID(uuid.MustParse(userId))))
+		WHERE(
+			table.Organizations.OwnerID.EQ(jet.UUID(uuid.MustParse(userId))).
+				OR(table.OrganizationMembers.ID.EQ(jet.UUID(uuid.MustParse(userId)))),
+		)
 
 	organizations := []model.Organizations{}
 
