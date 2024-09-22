@@ -16,7 +16,7 @@ import (
 func Initialize() (*gin.Engine, *sql.DB) {
 	gin.SetMode(gin.ReleaseMode)
 	common.SetupTestEnvironmentVars()
-	db := db.SetupTestDatabaseConnection()
+	db := db.SetupDatabaseConnection()
 
 	ql.InitLayer(db)
 

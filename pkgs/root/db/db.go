@@ -30,8 +30,11 @@ func SetupDatabaseConnection() *sql.DB {
 	return db
 }
 
-func SetupTestDatabaseConnection() *sql.DB {
+func RunMigrations() {
 	db := SetupDatabaseConnection()
+
+	defer db.Close()
+
 	dbUri := fmt.Sprintf(
 		"postgres://%s:%s@%s:%s/%s?sslmode=disable",
 		common.Env.PostgresUser,
@@ -72,5 +75,4 @@ func SetupTestDatabaseConnection() *sql.DB {
 		fmt.Println(err.Error())
 		os.Exit(1)
 	}
-	return db
 }
