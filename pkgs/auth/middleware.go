@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"github.com/ekota-space/zero/pkgs/response"
 	"github.com/gin-gonic/gin"
 )
 
@@ -8,7 +9,7 @@ func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		accessToken, err := c.Cookie("acc_t")
 		if err != nil || accessToken == "" {
-			c.JSON(401, gin.H{"error": "Missing access token"})
+			c.JSON(401, response.Error("Missing access token"))
 			c.Abort()
 			return
 		}
@@ -16,7 +17,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		claims, _, err := VerifyAccessToken(accessToken)
 
 		if err != nil {
-			c.JSON(401, gin.H{"error": "Invalid access token"})
+			c.JSON(401, response.Error("Invalid access token"))
 			c.Abort()
 			return
 		}
@@ -25,9 +26,9 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		if err != nil || !yes {
 			if !yes {
-				c.JSON(401, gin.H{"error": "User not found"})
+				c.JSON(401, response.Error("User not found"))
 			} else {
-				c.JSON(401, gin.H{"error": "Invalid access token"})
+				c.JSON(401, response.Error("Invalid access token"))
 			}
 			c.Abort()
 			return

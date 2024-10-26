@@ -1,6 +1,7 @@
 package organizationRoutes
 
 import (
+	"github.com/ekota-space/zero/pkgs/response"
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/model"
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/table"
 	"github.com/ekota-space/zero/pkgs/root/ql"
@@ -10,6 +11,15 @@ import (
 	jet "github.com/go-jet/jet/v2/postgres"
 )
 
+//	@Summary		Get organization
+//	@Description	Get organization by slug
+//	@Tags			Organizations
+//	@Accept			json
+//	@Produce		json
+//	@Param			orgId	path		string												true	"Organization Slug"
+//	@Success		200		{object}	response.SuccessDataResponse[model.Organizations]	"Successful response"
+//	@Failure		404		{object}	response.ErrorResponse[string]						"Organization not found"
+//	@Router			/organizations/{orgId} [get]
 func GetOrganization(ctx *gin.Context) {
 	slug := ctx.Param("orgId")
 
@@ -24,9 +34,9 @@ func GetOrganization(ctx *gin.Context) {
 	err := stmt.Query(ql.GetDB(), &organization)
 
 	if err != nil || organization.ID == uuid.Nil {
-		ctx.JSON(404, gin.H{"error": "Organization not found"})
+		ctx.JSON(404, response.Error("Organization not found"))
 		return
 	}
 
-	ctx.JSON(200, gin.H{"data": organization})
+	ctx.JSON(200, response.Success(organization))
 }

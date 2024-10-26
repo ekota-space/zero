@@ -1,6 +1,7 @@
 package organizations
 
 import (
+	"github.com/ekota-space/zero/pkgs/response"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,7 +14,7 @@ func AccessCheckMiddleware(accessRole string) gin.HandlerFunc {
 		accessLevel, org, err := GetAccessLevel(userId, orgSlug)
 
 		if err != nil {
-			ctx.JSON(500, gin.H{"error": "internal server error"})
+			ctx.JSON(500, response.Error("internal server error"))
 			ctx.Abort()
 			return
 		}
@@ -29,7 +30,7 @@ func AccessCheckMiddleware(accessRole string) gin.HandlerFunc {
 			return
 		}
 
-		ctx.JSON(403, gin.H{"error": "forbidden"})
+		ctx.JSON(403, response.Error("forbidden"))
 		ctx.Abort()
 	}
 }

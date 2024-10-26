@@ -1,0 +1,407 @@
+definitions:
+  authDao.AuthResponse:
+    properties:
+      expirationDurationSeconds:
+        type: integer
+    type: object
+  authDao.LoginDao:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  authDao.RegisterDao:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - email
+    - first_name
+    - last_name
+    - password
+    - username
+    type: object
+  model.Organizations:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      owner_id:
+        type: string
+      slug:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.Teams:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      organization_id:
+        type: string
+      slug:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.Users:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+      password:
+        type: string
+      password_reset_at:
+        type: string
+      updated_at:
+        type: string
+      username:
+        type: string
+      verified_at:
+        type: string
+    type: object
+  organizationDao.OrganizationInput:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      owner_id:
+        type: string
+      slug:
+        type: string
+    required:
+    - name
+    - owner_id
+    - slug
+    type: object
+  response.ErrorResponse-string:
+    properties:
+      error:
+        type: string
+    type: object
+  response.SuccessDataResponse-array_model_Organizations:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/model.Organizations'
+        type: array
+    type: object
+  response.SuccessDataResponse-array_model_Teams:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/model.Teams'
+        type: array
+    type: object
+  response.SuccessDataResponse-model_Organizations:
+    properties:
+      data:
+        $ref: '#/definitions/model.Organizations'
+    type: object
+  response.SuccessDataResponse-model_Teams:
+    properties:
+      data:
+        $ref: '#/definitions/model.Teams'
+    type: object
+  response.SuccessDataResponse-organizationDao_OrganizationInput:
+    properties:
+      data:
+        $ref: '#/definitions/organizationDao.OrganizationInput'
+    type: object
+  teamsDao.CreateTeamInput:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      slug:
+        type: string
+    required:
+    - name
+    - slug
+    type: object
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: User login route
+      parameters:
+      - description: User login
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/authDao.LoginDao'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User logged in
+          schema:
+            $ref: '#/definitions/authDao.AuthResponse'
+        "400":
+          description: Invalid email or password
+          schema:
+            $ref: '#/definitions/response.ErrorResponse-string'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse-string'
+      summary: Login user
+      tags:
+      - Auth
+  /auth/logout:
+    get:
+      description: User logout route
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User logged out
+      summary: Logout user
+      tags:
+      - Auth
+  /auth/refresh:
+    get:
+      description: Refresh access token route
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Access token refreshed
+          schema:
+            $ref: '#/definitions/authDao.AuthResponse'
+        "400":
+          description: Invalid refresh token
+          schema:
+            $ref: '#/definitions/response.ErrorResponse-string'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse-string'
+      summary: Refresh access token
+      tags:
+      - Auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: User registration route
+      parameters:
+      - description: User registration
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/authDao.RegisterDao'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User registered
+          schema:
+            $ref: '#/definitions/authDao.AuthResponse'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse-string'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse-string'
+      summary: Register user
+      tags:
+      - Auth
+  /organizations:
+    get:
+      consumes:
+      - application/json
+      description: List organizations route
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of organizations
+          schema:
+            $ref: '#/definitions/response.SuccessDataResponse-array_model_Organizations'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse-string'
+      summary: List organizations
+      tags:
+      - Organizations
+    post:
+      consumes:
+      - application/json
+      description: Create organization route
+      parameters:
+      - description: Organization creation
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/response.SuccessDataResponse-organizationDao_OrganizationInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Organization created
+          schema:
+            $ref: '#/definitions/model.Organizations'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse-string'
+        "403":
+          description: Owner ID must be the same as the authenticated user
+          schema:
+            $ref: '#/definitions/response.ErrorResponse-string'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse-string'
+      summary: Create organization
+      tags:
+      - Organizations
+  /organizations/{orgId}:
+    get:
+      consumes:
+      - application/json
+      description: Get organization by slug
+      parameters:
+      - description: Organization Slug
+        in: path
+        name: orgId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/response.SuccessDataResponse-model_Organizations'
+        "404":
+          description: Organization not found
+          schema:
+            $ref: '#/definitions/response.ErrorResponse-string'
+      summary: Get organization
+      tags:
+      - Organizations
+  /organizations/{orgSlug}/teams:
+    get:
+      consumes:
+      - application/json
+      description: Get list of teams
+      parameters:
+      - description: Organization slug
+        in: path
+        name: orgSlug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of teams
+          schema:
+            $ref: '#/definitions/response.SuccessDataResponse-array_model_Teams'
+        "500":
+          description: Failed to fetch teams
+          schema:
+            $ref: '#/definitions/response.ErrorResponse-string'
+      summary: Get list of teams
+      tags:
+      - Teams
+    post:
+      consumes:
+      - application/json
+      description: Create a team
+      parameters:
+      - description: Organization slug
+        in: path
+        name: orgSlug
+        required: true
+        type: string
+      - description: Team data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/teamsDao.CreateTeamInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Team created
+          schema:
+            $ref: '#/definitions/response.SuccessDataResponse-model_Teams'
+        "400":
+          description: Slug already exists
+          schema:
+            $ref: '#/definitions/response.ErrorResponse-string'
+        "500":
+          description: Failed to create team
+          schema:
+            $ref: '#/definitions/response.ErrorResponse-string'
+      summary: Create a team
+      tags:
+      - Teams
+  /user/me:
+    get:
+      consumes:
+      - application/json
+      description: Get user info
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User info
+          schema:
+            $ref: '#/definitions/model.Users'
+        "500":
+          description: Failed to fetch user info
+          schema:
+            $ref: '#/definitions/response.ErrorResponse-string'
+      summary: Get user info
+      tags:
+      - User
+swagger: "2.0"

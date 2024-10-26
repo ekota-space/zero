@@ -7,6 +7,7 @@ import (
 	auth "github.com/ekota-space/zero/pkgs/auth"
 	authDao "github.com/ekota-space/zero/pkgs/auth/dao"
 	"github.com/ekota-space/zero/pkgs/common"
+	"github.com/ekota-space/zero/pkgs/response"
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/model"
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/table"
 	"github.com/ekota-space/zero/pkgs/root/ql"
@@ -14,18 +15,28 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+//	@Summary		Register user
+//	@Description	User registration route
+//	@Tags			Auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		authDao.RegisterDao				true	"User registration"
+//	@Success		201		{object}	authDao.AuthResponse			"User registered"
+//	@Failure		400		{object}	response.ErrorResponse[string]	"Invalid request"
+//	@Failure		500		{object}	response.ErrorResponse[string]	"Internal server error"
+//	@Router			/auth/register [post]
 func PostRegister(ctx *gin.Context) {
 	body := authDao.RegisterDao{}
 
 	if err := ctx.BindJSON(&body); err != nil {
-		ctx.JSON(400, gin.H{"error": err.Error()})
+		ctx.JSON(400, response.Error(err.Error()))
 		return
 	}
 
 	passwordStr, err := auth.HashPassword(body.Password)
 
 	if err != nil {
-		ctx.JSON(500, gin.H{"error": err.Error()})
+		ctx.JSON(500, response.Error(err.Error()))
 		return
 	}
 
@@ -41,7 +52,7 @@ func PostRegister(ctx *gin.Context) {
 
 	if err != nil {
 		fmt.Println(err)
-		ctx.JSON(500, gin.H{"error": "Failed to start transaction"})
+		ctx.JSON(500, response.Error("Failed to start transaction"))
 		return
 	}
 
@@ -63,11 +74,11 @@ func PostRegister(ctx *gin.Context) {
 		tx.Rollback()
 
 		if strings.Contains(err.Error(), "email") {
-			ctx.JSON(400, gin.H{"error": "Email already exists"})
+			ctx.JSON(400, response.Error("Email already exists"))
 		} else if strings.Contains(err.Error(), "username") {
-			ctx.JSON(400, gin.H{"error": "Username already exists"})
+			ctx.JSON(400, response.Error("Username already exists"))
 		} else {
-			ctx.JSON(500, gin.H{"error": err.Error()})
+			ctx.JSON(500, response.Error(err.Error()))
 		}
 		return
 	}
@@ -78,11 +89,11 @@ func PostRegister(ctx *gin.Context) {
 	tokens, err := auth.GenerateAuthTokens(&user)
 
 	if err != nil {
-		ctx.JSON(500, gin.H{"error": err.Error()})
+		ctx.JSON(500, response.Error(err.Error()))
 		return
 	}
 
 	auth.SetCookies(ctx, tokens)
 
-	ctx.JSON(201, gin.H{"expirationDurationSeconds": int(common.AccessTokenDuration.Seconds())})
+	ctx.JSON(201, authDao.AuthResponse{ExpirationDurationSeconds: int(common.AccessTokenDuration.Seconds())})
 }

@@ -1,6 +1,7 @@
 package organizationRoutes
 
 import (
+	"github.com/ekota-space/zero/pkgs/response"
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/model"
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/table"
 	"github.com/ekota-space/zero/pkgs/root/ql"
@@ -9,6 +10,14 @@ import (
 	"github.com/google/uuid"
 )
 
+//	@Summary		List organizations
+//	@Description	List organizations route
+//	@Tags			Organizations
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	response.SuccessDataResponse[[]model.Organizations]	"List of organizations"
+//	@Failure		400	{object}	response.ErrorResponse[string]						"Invalid request"
+//	@Router			/organizations [get]
 func GetList(ctx *gin.Context) {
 	userId := ctx.GetString("id")
 
@@ -29,9 +38,9 @@ func GetList(ctx *gin.Context) {
 	err := stmt.Query(ql.GetDB(), &organizations)
 
 	if err != nil {
-		ctx.JSON(400, gin.H{"error": err.Error()})
+		ctx.JSON(400, response.Error(err.Error()))
 		return
 	}
 
-	ctx.JSON(200, gin.H{"data": organizations})
+	ctx.JSON(200, response.Success(organizations))
 }

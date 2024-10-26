@@ -1,6 +1,7 @@
 package teamsRoutes
 
 import (
+	"github.com/ekota-space/zero/pkgs/response"
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/model"
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/table"
 	"github.com/ekota-space/zero/pkgs/root/ql"
@@ -9,6 +10,15 @@ import (
 	"github.com/google/uuid"
 )
 
+// @Summary		Get list of teams
+// @Description	Get list of teams
+// @Tags			Teams
+// @Accept			json
+// @Produce		json
+// @Param			orgSlug	path	string	true	"Organization slug"
+// @Success		200	{object}	response.SuccessDataResponse[[]model.Teams]	"List of teams"
+// @Failure		500	{object}	response.ErrorResponse[string]			"Failed to fetch teams"
+// @Router		/organizations/{orgSlug}/teams [get]
 func GetList(ctx *gin.Context) {
 	orgId := ctx.GetString("organizationId")
 
@@ -27,9 +37,9 @@ func GetList(ctx *gin.Context) {
 	err := stmt.Query(ql.GetDB(), &teams)
 
 	if err != nil {
-		ctx.JSON(500, gin.H{"error": "Failed to fetch teams"})
+		ctx.JSON(500, response.Error("Failed to fetch teams"))
 		return
 	}
 
-	ctx.JSON(200, gin.H{"data": teams})
+	ctx.JSON(200, response.Success(teams))
 }

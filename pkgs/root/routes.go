@@ -12,12 +12,15 @@ import (
 	userRoutes "github.com/ekota-space/zero/pkgs/user/routes"
 	"github.com/gin-gonic/gin"
 	cors "github.com/rs/cors/wrapper/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func SetupRoutes() *gin.Engine {
-	r := gin.Default()
+	router := gin.Default()
+	apiV1 := router.Group("/api/v1")
 
-	r.Use(cors.New(
+	router.Use(cors.New(
 		cors.Options{
 			AllowedOrigins: []string{"http://localhost:3000"},
 			AllowedMethods: []string{
@@ -33,32 +36,32 @@ func SetupRoutes() *gin.Engine {
 			AllowCredentials: true,
 		},
 	))
-	r.GET("/", root.GetRoot)
+	apiV1.GET("/", root.GetRoot)
 
 	{
-		r.POST("/auth/login", authRoutes.PostLogin)
-		r.POST("/auth/register", authRoutes.PostRegister)
-		r.GET("/auth/refresh", authRoutes.GetRefresh)
-		r.GET("/auth/logout", authRoutes.GetLogout)
+		apiV1.POST("/auth/login", authRoutes.PostLogin)
+		apiV1.POST("/auth/register", authRoutes.PostRegister)
+		apiV1.GET("/auth/refresh", authRoutes.GetRefresh)
+		apiV1.GET("/auth/logout", authRoutes.GetLogout)
 	}
 
 	{
-		r.Use(auth.AuthMiddleware())
+		apiV1.Use(auth.AuthMiddleware())
 
-		r.GET("/user/me", userRoutes.GetUserInfo)
+		apiV1.GET("/user/me", userRoutes.GetUserInfo)
 
 		{
-			r.GET("/organizations", organizationRoutes.GetList)
-			r.POST("/organizations", organizationRoutes.PostCreate)
+			apiV1.GET("/organizations", organizationRoutes.GetList)
+			apiV1.POST("/organizations", organizationRoutes.PostCreate)
 		}
 
 		{
-			r.POST(
+			apiV1.POST(
 				"/organizations/:orgSlug/teams",
 				organizations.AccessCheckMiddleware(organizations.ADMIN),
 				teamsRoutes.PostCreate,
 			)
-			r.GET(
+			apiV1.GET(
 				"/organizations/:orgSlug/teams",
 				organizations.AccessCheckMiddleware(organizations.MEMBER),
 				teamsRoutes.GetList,
@@ -66,5 +69,15 @@ func SetupRoutes() *gin.Engine {
 		}
 	}
 
-	return r
+	router.GET("/swagger/*any",
+		func(ctx *gin.Context) {
+			if ctx.Request.RequestURI == "/swagger/" {
+				ctx.Redirect(302, "/swagger/index.html")
+				return
+			}
+			ginSwagger.WrapHandler(swaggerFiles.Handler)(ctx)
+		},
+	)
+
+	return router
 }
