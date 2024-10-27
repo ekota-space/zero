@@ -10,10 +10,11 @@ import (
 	"github.com/google/uuid"
 )
 
+// @Name			GetList
 // @Summary		Get list of teams
 // @Description	Get list of teams
 // @Tags			Teams
-// @Accept			json
+// @Accept		json
 // @Produce		json
 // @Param			orgSlug	path	string	true	"Organization slug"
 // @Success		200	{object}	response.SuccessDataResponse[[]model.Teams]	"List of teams"

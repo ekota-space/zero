@@ -3,3 +3,6 @@
 /certs
 
 **/.DS_Store
+
+# VSCode lsp debug binary
+__debug_bin*

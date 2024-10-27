@@ -22,7 +22,7 @@ func AccessCheckMiddleware(accessRole string) fiber.Handler {
 		// Admin can access everything except owner's
 		isAdmin := accessLevel == ADMIN && accessRole == MEMBER
 
-		ctx.Set("organizationId", org.ID.String())
+		ctx.Locals("organizationId", org.ID.String())
 
 		if accessLevel == accessRole || isOwner || isAdmin {
 			return ctx.Next()

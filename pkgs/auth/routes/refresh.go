@@ -48,7 +48,7 @@ func GetRefresh(ctx *fiber.Ctx) error {
 
 	refreshToken := ctx.Cookies("ref_t")
 
-	if err != nil || refreshToken == "" {
+	if refreshToken == "" {
 		return ctx.Status(400).JSON(response.Error("Refresh token is required"))
 
 	}

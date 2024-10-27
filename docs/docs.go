@@ -349,7 +349,7 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "Team created",
                         "schema": {
                             "$ref": "#/definitions/response.SuccessDataResponse-model_Teams"
