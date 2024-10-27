@@ -3,7 +3,6 @@ package test
 import (
 	"database/sql"
 	"io"
-	"net/http"
 	"net/http/httptest"
 
 	"github.com/ekota-space/zero/pkgs/common"
@@ -25,9 +24,18 @@ func Initialize() (*fiber.App, *sql.DB) {
 func CreateRequest(router *fiber.App, method string, url string, body io.Reader) *httptest.ResponseRecorder {
 	w := httptest.NewRecorder()
 
-	req, _ := http.NewRequest(method, url, body)
+	req := httptest.NewRequest(method, url, body)
 
-	// router.ServeHTTP(w, req)
+	res, _ := router.Test(req)
+
+	w.Code = res.StatusCode
+	resBody, _ := io.ReadAll(res.Body)
+
+	w.Body.Write(resBody)
+
+	for k, v := range res.Header {
+		w.Header()[k] = v
+	}
 
 	return w
 }

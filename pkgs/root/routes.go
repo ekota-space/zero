@@ -12,7 +12,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	fiberSwagger "github.com/swaggo/fiber-swagger"
+	"github.com/gofiber/swagger"
 )
 
 func SetupRoutes() *fiber.App {
@@ -61,14 +61,7 @@ func SetupRoutes() *fiber.App {
 		}
 	}
 
-	router.Get("/swagger/*any",
-		func(ctx *fiber.Ctx) error {
-			if string(ctx.Request().RequestURI()) == "/swagger/" {
-				return ctx.Redirect("/swagger/index.html", 301)
-			}
-			return fiberSwagger.WrapHandler(ctx)
-		},
-	)
+	router.Get("/swagger/*", swagger.HandlerDefault)
 
 	return router
 }
