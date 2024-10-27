@@ -20,7 +20,7 @@ func SetupRoutes() *gin.Engine {
 	router := gin.Default()
 	apiV1 := router.Group("/api/v1")
 
-	router.Use(cors.New(
+	apiV1.Use(cors.New(
 		cors.Options{
 			AllowedOrigins: []string{"http://localhost:3000"},
 			AllowedMethods: []string{

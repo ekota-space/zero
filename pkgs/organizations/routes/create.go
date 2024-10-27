@@ -11,17 +11,17 @@ import (
 	"github.com/google/uuid"
 )
 
-//	@Summary		Create organization
-//	@Description	Create organization route
-//	@Tags			Organizations
-//	@Accept			json
-//	@Produce		json
-//	@Param			body	body		response.SuccessDataResponse[organizationDao.OrganizationInput]	true	"Organization creation"
-//	@Success		201		{object}	model.Organizations												"Organization created"
-//	@Failure		400		{object}	response.ErrorResponse[string]									"Invalid request"
-//	@Failure		403		{object}	response.ErrorResponse[string]									"Owner ID must be the same as the authenticated user"
-//	@Failure		500		{object}	response.ErrorResponse[string]									"Internal server error"
-//	@Router			/organizations [post]
+// @Summary		Create organization
+// @Description	Create organization route
+// @Tags			Organizations
+// @Accept			json
+// @Produce		json
+// @Param			body	body		organizationDao.OrganizationInput	true	"Organization creation"
+// @Success		201		{object}	response.SuccessDataResponse[model.Organizations]	"Organization created"
+// @Failure		400		{object}	response.ErrorResponse[string]	"Invalid request"
+// @Failure		403		{object}	response.ErrorResponse[string]	"Owner ID must be the same as the authenticated user"
+// @Failure		500		{object}	response.ErrorResponse[string]	"Internal server error"
+// @Router			/organizations [post]
 func PostCreate(ctx *gin.Context) {
 	body := organizationDao.OrganizationInput{}
 

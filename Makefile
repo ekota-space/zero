@@ -4,6 +4,9 @@ MIGRATION_DIR=file://db/migrations
 gen:
 		go run db/generator.go
 
+swagger:
+		swag i
+
 diff:
 		atlas migrate diff --env local
 

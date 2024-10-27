@@ -211,7 +211,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/response.SuccessDataResponse-organizationDao_OrganizationInput"
+                            "$ref": "#/definitions/organizationDao.OrganizationInput"
                         }
                     }
                 ],
@@ -219,7 +219,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Organization created",
                         "schema": {
-                            "$ref": "#/definitions/model.Organizations"
+                            "$ref": "#/definitions/response.SuccessDataResponse-model_Organizations"
                         }
                     },
                     "400": {
@@ -387,7 +387,7 @@ const docTemplate = `{
                     "200": {
                         "description": "User info",
                         "schema": {
-                            "$ref": "#/definitions/model.Users"
+                            "$ref": "#/definitions/response.SuccessDataResponse-model_Users"
                         }
                     },
                     "500": {
@@ -602,11 +602,11 @@ const docTemplate = `{
                 }
             }
         },
-        "response.SuccessDataResponse-organizationDao_OrganizationInput": {
+        "response.SuccessDataResponse-model_Users": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/organizationDao.OrganizationInput"
+                    "$ref": "#/definitions/model.Users"
                 }
             }
         },

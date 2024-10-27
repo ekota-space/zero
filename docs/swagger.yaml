@@ -131,10 +131,10 @@ definitions:
       data:
         $ref: '#/definitions/model.Teams'
     type: object
-  response.SuccessDataResponse-organizationDao_OrganizationInput:
+  response.SuccessDataResponse-model_Users:
     properties:
       data:
-        $ref: '#/definitions/organizationDao.OrganizationInput'
+        $ref: '#/definitions/model.Users'
     type: object
   teamsDao.CreateTeamInput:
     properties:
@@ -278,14 +278,14 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/response.SuccessDataResponse-organizationDao_OrganizationInput'
+          $ref: '#/definitions/organizationDao.OrganizationInput'
       produces:
       - application/json
       responses:
         "201":
           description: Organization created
           schema:
-            $ref: '#/definitions/model.Organizations'
+            $ref: '#/definitions/response.SuccessDataResponse-model_Organizations'
         "400":
           description: Invalid request
           schema:
@@ -396,7 +396,7 @@ paths:
         "200":
           description: User info
           schema:
-            $ref: '#/definitions/model.Users'
+            $ref: '#/definitions/response.SuccessDataResponse-model_Users'
         "500":
           description: Failed to fetch user info
           schema:

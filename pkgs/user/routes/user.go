@@ -11,7 +11,7 @@ import (
 // @Tags			User
 // @Accept			json
 // @Produce		json
-// @Success		200	{object}	model.Users	"User info"
+// @Success		200	{object}	response.SuccessDataResponse[model.Users]	"User info"
 // @Failure		500	{object}	response.ErrorResponse[string]	"Failed to fetch user info"
 // @Router		/user/me [get]
 func GetUserInfo(ctx *gin.Context) {
@@ -24,5 +24,5 @@ func GetUserInfo(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(200, user)
+	ctx.JSON(200, response.Success(user))
 }
