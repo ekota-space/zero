@@ -10,11 +10,12 @@ import (
 	authDao "github.com/ekota-space/zero/pkgs/auth/dao"
 	"github.com/ekota-space/zero/tests/fake"
 	"github.com/ekota-space/zero/tests/test"
-	"github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v2"
+
 	"github.com/stretchr/testify/assert"
 )
 
-func postAuthRegister(router *gin.Engine, body authDao.RegisterDao) *httptest.ResponseRecorder {
+func postAuthRegister(router *fiber.App, body authDao.RegisterDao) *httptest.ResponseRecorder {
 	bodyJson, _ := json.Marshal(body)
 
 	w := test.CreateRequest(router, "POST", "/auth/register", strings.NewReader(string(bodyJson)))

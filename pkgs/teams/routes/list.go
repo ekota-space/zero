@@ -5,8 +5,8 @@ import (
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/model"
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/table"
 	"github.com/ekota-space/zero/pkgs/root/ql"
-	"github.com/gin-gonic/gin"
 	jet "github.com/go-jet/jet/v2/postgres"
+	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
 
@@ -19,8 +19,8 @@ import (
 // @Success		200	{object}	response.SuccessDataResponse[[]model.Teams]	"List of teams"
 // @Failure		500	{object}	response.ErrorResponse[string]			"Failed to fetch teams"
 // @Router		/organizations/{orgSlug}/teams [get]
-func GetList(ctx *gin.Context) {
-	orgId := ctx.GetString("organizationId")
+func GetList(ctx *fiber.Ctx) error {
+	orgId := ctx.Locals("organizationId").(string)
 
 	teams := []model.Teams{}
 
@@ -37,9 +37,8 @@ func GetList(ctx *gin.Context) {
 	err := stmt.Query(ql.GetDB(), &teams)
 
 	if err != nil {
-		ctx.JSON(500, response.Error("Failed to fetch teams"))
-		return
+		return ctx.Status(500).JSON(response.Error("Failed to fetch teams"))
 	}
 
-	ctx.JSON(200, response.Success(teams))
+	return ctx.Status(200).JSON(response.Success(teams))
 }

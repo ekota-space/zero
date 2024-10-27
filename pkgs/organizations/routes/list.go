@@ -5,21 +5,21 @@ import (
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/model"
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/table"
 	"github.com/ekota-space/zero/pkgs/root/ql"
-	"github.com/gin-gonic/gin"
 	jet "github.com/go-jet/jet/v2/postgres"
+	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
 
-//	@Summary		List organizations
-//	@Description	List organizations route
-//	@Tags			Organizations
-//	@Accept			json
-//	@Produce		json
-//	@Success		200	{object}	response.SuccessDataResponse[[]model.Organizations]	"List of organizations"
-//	@Failure		400	{object}	response.ErrorResponse[string]						"Invalid request"
-//	@Router			/organizations [get]
-func GetList(ctx *gin.Context) {
-	userId := ctx.GetString("id")
+// @Summary		List organizations
+// @Description	List organizations route
+// @Tags			Organizations
+// @Accept			json
+// @Produce		json
+// @Success		200	{object}	response.SuccessDataResponse[[]model.Organizations]	"List of organizations"
+// @Failure		400	{object}	response.ErrorResponse[string]						"Invalid request"
+// @Router			/organizations [get]
+func GetList(ctx *fiber.Ctx) error {
+	userId := ctx.Locals("id").(string)
 
 	stmt := table.Organizations.
 		LEFT_JOIN(
@@ -38,9 +38,8 @@ func GetList(ctx *gin.Context) {
 	err := stmt.Query(ql.GetDB(), &organizations)
 
 	if err != nil {
-		ctx.JSON(400, response.Error(err.Error()))
-		return
+		return ctx.Status(400).JSON(response.Error(err.Error()))
 	}
 
-	ctx.JSON(200, response.Success(organizations))
+	return ctx.Status(200).JSON(response.Success(organizations))
 }

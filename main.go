@@ -29,5 +29,5 @@ func main() {
 
 	router := root.SetupRoutes()
 
-	router.Run(fmt.Sprintf("localhost:%d", common.Env.Port))
+	router.Listen(fmt.Sprintf("localhost:%d", common.Env.Port))
 }

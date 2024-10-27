@@ -5,10 +5,10 @@ import (
 
 	"github.com/ekota-space/zero/tests/setup"
 	"github.com/ekota-space/zero/tests/test"
-	"github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v2"
 )
 
-var router *gin.Engine
+var router *fiber.App
 
 func TestMain(t *testing.M) {
 	setup.GlobalSetup()

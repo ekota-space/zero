@@ -8,8 +8,8 @@ import (
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/model"
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/table"
 	"github.com/ekota-space/zero/pkgs/root/ql"
-	"github.com/gin-gonic/gin"
 	jet "github.com/go-jet/jet/v2/postgres"
+	"github.com/gofiber/fiber/v2"
 	jwt "github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
@@ -120,27 +120,51 @@ func VerifyAccessToken(token string) (*Claims, *jwt.Token, error) {
 
 }
 
-func SetCookies(ctx *gin.Context, tokens authDao.AuthTokenResponseDao) {
-	ctx.SetCookie(
-		"acc_t", tokens.AccessToken,
-		int(time.Hour*24*30), /*30 days*/
-		"/",
-		common.Env.ClientOrigin,
-		false,
-		true,
+func SetCookies(ctx *fiber.Ctx, tokens authDao.AuthTokenResponseDao) {
+	ctx.Cookie(
+		&fiber.Cookie{
+			Name:     "acc_t",
+			Value:    tokens.AccessToken,
+			MaxAge:   int(time.Hour * 24 * 30), /*30 days*/
+			Path:     "/",
+			Domain:   common.Env.ClientOrigin,
+			Secure:   false,
+			HTTPOnly: true,
+		},
 	)
 
-	ctx.SetCookie(
-		"ref_t", tokens.RefreshToken,
-		int(time.Hour*24*30), /*30 days*/
-		"/",
-		common.Env.ClientOrigin,
-		false,
-		true,
+	ctx.Cookie(
+		&fiber.Cookie{
+			Name:     "ref_t",
+			Value:    tokens.RefreshToken,
+			MaxAge:   int(time.Hour * 24 * 30), /*30 days*/
+			Path:     "/",
+			Domain:   common.Env.ClientOrigin,
+			Secure:   false,
+			HTTPOnly: true,
+		},
 	)
 }
 
-func ClearCookies(ctx *gin.Context) {
-	ctx.SetCookie("acc_t", "", -1, "/", common.Env.ClientOrigin, false, true)
-	ctx.SetCookie("ref_t", "", -1, "/", common.Env.ClientOrigin, false, true)
+func ClearCookies(ctx *fiber.Ctx) {
+	ctx.Cookie(
+		&fiber.Cookie{
+			Name:     "acc_t",
+			Value:    "",
+			MaxAge:   -1,
+			Domain:   common.Env.ClientOrigin,
+			Path:     "/",
+			Secure:   false,
+			HTTPOnly: true,
+		},
+	)
+	ctx.Cookie(&fiber.Cookie{
+		Name:     "ref_t",
+		Value:    "",
+		MaxAge:   -1,
+		Domain:   common.Env.ClientOrigin,
+		Path:     "/",
+		Secure:   false,
+		HTTPOnly: true,
+	})
 }

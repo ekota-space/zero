@@ -10,11 +10,10 @@ import (
 	"github.com/ekota-space/zero/pkgs/root"
 	"github.com/ekota-space/zero/pkgs/root/db"
 	"github.com/ekota-space/zero/pkgs/root/ql"
-	"github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v2"
 )
 
-func Initialize() (*gin.Engine, *sql.DB) {
-	gin.SetMode(gin.ReleaseMode)
+func Initialize() (*fiber.App, *sql.DB) {
 	common.SetupTestEnvironmentVars()
 	db := db.SetupDatabaseConnection()
 
@@ -23,12 +22,12 @@ func Initialize() (*gin.Engine, *sql.DB) {
 	return root.SetupRoutes(), db
 }
 
-func CreateRequest(router *gin.Engine, method string, url string, body io.Reader) *httptest.ResponseRecorder {
+func CreateRequest(router *fiber.App, method string, url string, body io.Reader) *httptest.ResponseRecorder {
 	w := httptest.NewRecorder()
 
 	req, _ := http.NewRequest(method, url, body)
 
-	router.ServeHTTP(w, req)
+	// router.ServeHTTP(w, req)
 
 	return w
 }

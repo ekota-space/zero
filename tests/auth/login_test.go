@@ -14,11 +14,11 @@ import (
 	"github.com/ekota-space/zero/pkgs/root/ql"
 	"github.com/ekota-space/zero/tests/fake"
 	"github.com/ekota-space/zero/tests/test"
-	"github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/assert"
 )
 
-func postAuthLogin(router *gin.Engine, body authDao.LoginDao) *httptest.ResponseRecorder {
+func postAuthLogin(router *fiber.App, body authDao.LoginDao) *httptest.ResponseRecorder {
 	bodyJson, _ := json.Marshal(body)
 
 	w := test.CreateRequest(router, "POST", "/auth/login", strings.NewReader(string(bodyJson)))

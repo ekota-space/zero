@@ -7,7 +7,7 @@ import (
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/table"
 	"github.com/ekota-space/zero/pkgs/root/ql"
 	teamsDao "github.com/ekota-space/zero/pkgs/teams/dao"
-	"github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v2"
 )
 
 // @Summary		Create a team
@@ -21,19 +21,18 @@ import (
 // @Failure		400		{object}	response.ErrorResponse[string]			"Slug already exists"
 // @Failure		500		{object}	response.ErrorResponse[string]			"Failed to create team"
 // @Router		/organizations/{orgSlug}/teams [post]
-func PostCreate(ctx *gin.Context) {
+func PostCreate(ctx *fiber.Ctx) error {
 	body := teamsDao.CreateTeamInput{}
 
-	if err := ctx.BindJSON(&body); err != nil {
-		ctx.JSON(400, response.Error(err.Error()))
-		return
+	if err := ctx.BodyParser(&body); err != nil {
+		return ctx.Status(400).JSON(response.Error(err.Error()))
+
 	}
 
 	tx, err := ql.GetDB().Begin()
 
 	if err != nil {
-		ctx.JSON(500, response.Error("Failed to start transaction"))
-		return
+		return ctx.Status(500).JSON(response.Error("Failed to start transaction"))
 	}
 
 	stmt := table.Teams.INSERT(
@@ -52,15 +51,13 @@ func PostCreate(ctx *gin.Context) {
 		tx.Rollback()
 
 		if common.IsDuplicateKeyError(err) {
-			ctx.JSON(400, response.Error("Slug already exists"))
-			return
+			return ctx.Status(400).JSON(response.Error("Slug already exists"))
 		}
 
-		ctx.JSON(500, response.Error("Failed to create team"))
-		return
+		return ctx.Status(500).JSON(response.Error("Failed to create team"))
 	}
 
 	tx.Commit()
 
-	ctx.JSON(200, response.Success(team))
+	return ctx.Status(200).JSON(response.Success(team))
 }

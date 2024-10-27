@@ -1,8 +1,6 @@
 package root
 
 import (
-	"net/http"
-
 	auth "github.com/ekota-space/zero/pkgs/auth"
 	authRoutes "github.com/ekota-space/zero/pkgs/auth/routes"
 	"github.com/ekota-space/zero/pkgs/organizations"
@@ -10,58 +8,52 @@ import (
 	root "github.com/ekota-space/zero/pkgs/root/routes"
 	teamsRoutes "github.com/ekota-space/zero/pkgs/teams/routes"
 	userRoutes "github.com/ekota-space/zero/pkgs/user/routes"
-	"github.com/gin-gonic/gin"
-	cors "github.com/rs/cors/wrapper/gin"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	fiberSwagger "github.com/swaggo/fiber-swagger"
 )
 
-func SetupRoutes() *gin.Engine {
-	router := gin.Default()
+func SetupRoutes() *fiber.App {
+	router := fiber.New()
+
+	router.Use(logger.New())
+
 	apiV1 := router.Group("/api/v1")
 
 	apiV1.Use(cors.New(
-		cors.Options{
-			AllowedOrigins: []string{"http://localhost:3000"},
-			AllowedMethods: []string{
-				http.MethodOptions,
-				http.MethodHead,
-				http.MethodGet,
-				http.MethodPost,
-				http.MethodPut,
-				http.MethodPatch,
-				http.MethodDelete,
-			},
-			AllowedHeaders:   []string{"*"},
+		cors.Config{
+			AllowOrigins:     "http://localhost:3000",
 			AllowCredentials: true,
 		},
 	))
-	apiV1.GET("/", root.GetRoot)
+	apiV1.Get("/", root.GetRoot)
 
 	{
-		apiV1.POST("/auth/login", authRoutes.PostLogin)
-		apiV1.POST("/auth/register", authRoutes.PostRegister)
-		apiV1.GET("/auth/refresh", authRoutes.GetRefresh)
-		apiV1.GET("/auth/logout", authRoutes.GetLogout)
+		apiV1.Post("/auth/login", authRoutes.PostLogin)
+		apiV1.Post("/auth/register", authRoutes.PostRegister)
+		apiV1.Get("/auth/refresh", authRoutes.GetRefresh)
+		apiV1.Get("/auth/logout", authRoutes.GetLogout)
 	}
 
 	{
 		apiV1.Use(auth.AuthMiddleware())
 
-		apiV1.GET("/user/me", userRoutes.GetUserInfo)
+		apiV1.Get("/user/me", userRoutes.GetUserInfo)
 
 		{
-			apiV1.GET("/organizations", organizationRoutes.GetList)
-			apiV1.POST("/organizations", organizationRoutes.PostCreate)
+			apiV1.Get("/organizations", organizationRoutes.GetList)
+			apiV1.Post("/organizations", organizationRoutes.PostCreate)
 		}
 
 		{
-			apiV1.POST(
+			apiV1.Post(
 				"/organizations/:orgSlug/teams",
 				organizations.AccessCheckMiddleware(organizations.ADMIN),
 				teamsRoutes.PostCreate,
 			)
-			apiV1.GET(
+			apiV1.Get(
 				"/organizations/:orgSlug/teams",
 				organizations.AccessCheckMiddleware(organizations.MEMBER),
 				teamsRoutes.GetList,
@@ -69,13 +61,12 @@ func SetupRoutes() *gin.Engine {
 		}
 	}
 
-	router.GET("/swagger/*any",
-		func(ctx *gin.Context) {
-			if ctx.Request.RequestURI == "/swagger/" {
-				ctx.Redirect(302, "/swagger/index.html")
-				return
+	router.Get("/swagger/*any",
+		func(ctx *fiber.Ctx) error {
+			if string(ctx.Request().RequestURI()) == "/swagger/" {
+				return ctx.Redirect("/swagger/index.html", 301)
 			}
-			ginSwagger.WrapHandler(swaggerFiles.Handler)(ctx)
+			return fiberSwagger.WrapHandler(ctx)
 		},
 	)
 

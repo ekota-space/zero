@@ -2,7 +2,7 @@ package authRoutes
 
 import (
 	"github.com/ekota-space/zero/pkgs/auth"
-	"github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v2"
 )
 
 // @Summary		Logout user
@@ -11,8 +11,8 @@ import (
 // @Produce		json
 // @Success		200	"User logged out"
 // @Router			/auth/logout [get]
-func GetLogout(ctx *gin.Context) {
+func GetLogout(ctx *fiber.Ctx) error {
 	auth.ClearCookies(ctx)
 
-	ctx.Status(200)
+	return ctx.Status(200).JSON(nil)
 }

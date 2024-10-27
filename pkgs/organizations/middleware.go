@@ -2,21 +2,20 @@ package organizations
 
 import (
 	"github.com/ekota-space/zero/pkgs/response"
-	"github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v2"
 )
 
-func AccessCheckMiddleware(accessRole string) gin.HandlerFunc {
+func AccessCheckMiddleware(accessRole string) fiber.Handler {
 
-	return func(ctx *gin.Context) {
-		userId := ctx.GetString("id")
-		orgSlug := ctx.Param("orgSlug")
+	return func(ctx *fiber.Ctx) error {
+		userId := ctx.Locals("id").(string)
+		orgSlug := ctx.Params("orgSlug")
 
 		accessLevel, org, err := GetAccessLevel(userId, orgSlug)
 
 		if err != nil {
-			ctx.JSON(500, response.Error("internal server error"))
-			ctx.Abort()
-			return
+			return ctx.Status(500).JSON(response.Error("internal server error"))
+
 		}
 		// Owner can access everything
 		isOwner := accessLevel == OWNER && (accessRole == ADMIN || accessRole == MEMBER)
@@ -26,11 +25,10 @@ func AccessCheckMiddleware(accessRole string) gin.HandlerFunc {
 		ctx.Set("organizationId", org.ID.String())
 
 		if accessLevel == accessRole || isOwner || isAdmin {
-			ctx.Next()
-			return
+			return ctx.Next()
+
 		}
 
-		ctx.JSON(403, response.Error("forbidden"))
-		ctx.Abort()
+		return ctx.Status(403).JSON(response.Error("forbidden"))
 	}
 }

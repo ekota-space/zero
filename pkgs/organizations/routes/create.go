@@ -7,7 +7,7 @@ import (
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/model"
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/table"
 	"github.com/ekota-space/zero/pkgs/root/ql"
-	"github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
 
@@ -22,19 +22,18 @@ import (
 // @Failure		403		{object}	response.ErrorResponse[string]	"Owner ID must be the same as the authenticated user"
 // @Failure		500		{object}	response.ErrorResponse[string]	"Internal server error"
 // @Router			/organizations [post]
-func PostCreate(ctx *gin.Context) {
+func PostCreate(ctx *fiber.Ctx) error {
 	body := organizationDao.OrganizationInput{}
 
-	if err := ctx.BindJSON(&body); err != nil {
-		ctx.JSON(400, response.Error(err.Error()))
-		return
+	if err := ctx.BodyParser(&body); err != nil {
+		return ctx.Status(400).JSON(response.Error(err.Error()))
 	}
 
-	userId := ctx.GetString("id")
+	userId := ctx.Locals("id").(string)
 
 	if userId != body.OwnerID {
-		ctx.JSON(403, response.Error("owner_id must be the same as the authenticated user"))
-		return
+		return ctx.Status(403).JSON(response.Error("owner_id must be the same as the authenticated user"))
+
 	}
 
 	ownerId := uuid.MustParse(body.OwnerID)
@@ -48,8 +47,7 @@ func PostCreate(ctx *gin.Context) {
 	tx, err := ql.GetDB().Begin()
 
 	if err != nil {
-		ctx.JSON(500, response.Error("Failed to start transaction"))
-		return
+		return ctx.Status(500).JSON(response.Error("Failed to start transaction"))
 	}
 
 	stmt := table.Organizations.INSERT(
@@ -68,15 +66,13 @@ func PostCreate(ctx *gin.Context) {
 		tx.Rollback()
 
 		if common.IsDuplicateKeyError(err) {
-			ctx.JSON(400, response.Error("Slug already exists"))
-			return
+			return ctx.Status(400).JSON(response.Error("Slug already exists"))
 		}
 
-		ctx.JSON(400, response.Error(err.Error()))
-		return
+		return ctx.Status(400).JSON(response.Error(err.Error()))
 	}
 
 	tx.Commit()
 
-	ctx.JSON(201, response.Success(result))
+	return ctx.Status(201).JSON(response.Success(result))
 }

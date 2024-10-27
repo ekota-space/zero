@@ -5,23 +5,23 @@ import (
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/model"
 	"github.com/ekota-space/zero/pkgs/root/db/zero/public/table"
 	"github.com/ekota-space/zero/pkgs/root/ql"
-	"github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 
 	jet "github.com/go-jet/jet/v2/postgres"
 )
 
-//	@Summary		Get organization
-//	@Description	Get organization by slug
-//	@Tags			Organizations
-//	@Accept			json
-//	@Produce		json
-//	@Param			orgId	path		string												true	"Organization Slug"
-//	@Success		200		{object}	response.SuccessDataResponse[model.Organizations]	"Successful response"
-//	@Failure		404		{object}	response.ErrorResponse[string]						"Organization not found"
-//	@Router			/organizations/{orgId} [get]
-func GetOrganization(ctx *gin.Context) {
-	slug := ctx.Param("orgId")
+// @Summary		Get organization
+// @Description	Get organization by slug
+// @Tags			Organizations
+// @Accept			json
+// @Produce		json
+// @Param			orgId	path		string												true	"Organization Slug"
+// @Success		200		{object}	response.SuccessDataResponse[model.Organizations]	"Successful response"
+// @Failure		404		{object}	response.ErrorResponse[string]						"Organization not found"
+// @Router			/organizations/{orgId} [get]
+func GetOrganization(ctx *fiber.Ctx) error {
+	slug := ctx.Params("orgId")
 
 	organization := model.Organizations{}
 
@@ -34,9 +34,8 @@ func GetOrganization(ctx *gin.Context) {
 	err := stmt.Query(ql.GetDB(), &organization)
 
 	if err != nil || organization.ID == uuid.Nil {
-		ctx.JSON(404, response.Error("Organization not found"))
-		return
+		return ctx.Status(404).JSON(response.Error("Organization not found"))
 	}
 
-	ctx.JSON(200, response.Success(organization))
+	return ctx.Status(200).JSON(response.Success(organization))
 }
